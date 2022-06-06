@@ -1,0 +1,31 @@
+{
+  "name": "imaginationmedia/magento-hyva-algolia-instantsearch",
+  "version": "1.0.0",
+  "description": "Hyva-themes compatibility module for Algolia instant search results page",
+  "type": "magento2-module",
+  "require": {
+    "magento/framework": "*",
+    "algolia/algoliasearch-magento-2": "3.2.*",
+    "hyva-themes/magento2-algolia-search": "dev-main"
+  },
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "authors": [
+    {
+      "name": "Vaslii Burlacu",
+      "email": "vasilii@imaginationmedia.com",
+      "homepage": "http://www.imaginationmedia.com/",
+      "role": "Developer"
+    }
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "ImaginationMedia\\HyvaAlgoliaSearch\\": ""
+    }
+  }
+}

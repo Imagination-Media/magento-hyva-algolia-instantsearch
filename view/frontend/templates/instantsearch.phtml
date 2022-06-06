@@ -1,0 +1,93 @@
+<?php
+
+/**
+ * HyvaAlgoliaSearch
+ *
+ * Hyva compatibility for AlgoliaSearch instant search results page
+ *
+ * @package ImaginationMedia\HyvaAlgoliaSearch
+ * @author Vasilii Burlacu <vasilii@imaginationmedia.com>
+ * @copyright Copyright (c) 2022 Imagination Media (https://www.imaginationmedia.com/)
+ * @license https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
+ */
+
+declare(strict_types=1);
+
+use Algolia\AlgoliaSearch\Block\Algolia;
+use Hyva\AlgoliaSearch\ViewModel\Form;
+use Hyva\Theme\Model\ViewModelRegistry;
+use Magento\Framework\Escaper;
+
+/** @var Algolia $block */
+/** @var Escaper $escaper */
+/** @var ViewModelRegistry $viewModels */
+
+$config = $block->getConfigHelper();
+
+$catalogSearchHelper = $block->getCatalogSearchHelper();
+
+/** @var Form $viewModel */
+$viewModel = $viewModels->require(Form::class);
+
+$scripts = [
+    'Hyva_AlgoliaSearch::js/internals/algoliaBundle.min.js',
+    'Hyva_AlgoliaSearch::js/internals/common.js',
+    'ImaginationMedia_HyvaAlgoliaSearch::js/instantsearch.js',
+];
+
+if (!$config->isInstantEnabled($config->getStoreId())) {
+    return;
+}
+?>
+
+<script defer>
+    /**
+     * Initialize the Algolia config if it was not previously added.
+     * From the autocomplete functionality, for example.
+     */
+    if (!window.algoliaConfig) {
+        const algoliaConfig = <?= /** @noEscape */ $viewModel->getJsConfig(); ?>;
+    }
+
+    function initAlgoliaInstantSearch() {
+        function loadScript (url) {
+            // TODO: improve not to load script twice
+            // when already loaded from Autocomplete functionality
+            let script = document.createElement('script');
+            script.setAttribute('type', 'text/javascript');
+            script.setAttribute('src', url);
+            document.head.append(script);
+
+            return new Promise((resolve) => script.addEventListener('load', resolve));
+        }
+
+        return {
+            initialized: false,
+            init: function () {
+                if (this.initialized) {
+                    return;
+                }
+
+                const promises = [
+                    <?php foreach ($scripts as $scriptUrl) : ?>
+                    loadScript('<?= $escaper->escapeJs($viewModel->getAssetUrl($scriptUrl)) ?>'),
+                    <?php endforeach; ?>
+                ];
+
+                // When all files are loaded
+                Promise.all(promises).then(() => {
+                    algoliaCommon(algoliaConfig);
+                    algoliaInstantSearch(algoliaConfig);
+
+                    algolia.registerHook('afterInstantsearchStart', function(algoliaInstantSearchInstance) {
+                        return algoliaInstantSearchInstance;
+                    });
+                });
+
+                this.initialized = true;
+            }
+        };
+    }
+</script>
+
+<div id="algolia-init-instantsearch" x-data="initAlgoliaInstantSearch()" x-init="init()"></div>

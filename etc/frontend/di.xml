@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * HyvaAlgoliaSearch
+ *
+ * Hyva compatibility for AlgoliaSearch instant search results page
+ *
+ * @package ImaginationMedia\HyvaAlgoliaSearch
+ * @author Vasilii Burlacu <vasilii@imaginationmedia.com>
+ * @copyright Copyright (c) 2022 Imagination Media (https://www.imaginationmedia.com/)
+ * @license https://opensource.org/licenses/OSL-3.0.php Open Software License 3.0
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Algolia\AlgoliaSearch\Model\Observer">
+        <plugin name="im_hyva_algolia_instantsearch_layout"
+                type="ImaginationMedia\HyvaAlgoliaSearch\Plugin\AlgoliaInstantSearchLayoutHandle"
+                sortOrder="10"/>
+    </type>
+</config>
